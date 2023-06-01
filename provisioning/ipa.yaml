@@ -1,0 +1,21 @@
+---
+- hosts: ipa.otus.lan
+  become: yes
+  tasks:
+  
+  - name: update the rpm
+    ansible.builtin.dnf:
+      name:
+        - rpm
+      state: latest
+      update_only: yes
+
+  - name: correct file hosts
+    ansible.builtin.shell:
+      cmd: echo "127.0.0.1 localhost localhost.localdomain" > /etc/hosts && echo "127.0.1.1 ipa.otus.lan ipa" >> /etc/hosts &&  echo "192.168.56.10 ipa.otus.lan ipa" >> /etc/hosts
+
+  - name: install packages
+    ansible.builtin.yum: name={{ item }}
+    with_items:
+      - "@idm:DL1"
+      - ipa-server
